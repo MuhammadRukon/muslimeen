@@ -17,6 +17,7 @@ export interface IChapters {
 export interface IVerseResponse {
   verses: IVerse[];
   pagination: IPagination;
+  chapter: IChapters;
 }
 
 interface ITafsir {
@@ -65,10 +66,10 @@ export interface IVerse {
   tafsirs: ITafsir[];
 }
 
-interface IPagination {
+export interface IPagination {
   per_page: number;
   current_page: number;
-  next_page: number;
+  next_page: number | null;
   total_pages: number;
   total_records: number;
 }

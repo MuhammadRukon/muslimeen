@@ -5,12 +5,20 @@ interface IParams {
   params: Promise<{ id: string }>;
 }
 
-export async function GET(_: Request, { params }: IParams) {
+export async function GET(request: Request, { params }: IParams) {
   const { id } = await params;
+  const { searchParams } = new URL(request.url);
+  const page = searchParams.get("page") || "1";
+  const perPage = searchParams.get("per_page") || "10";
 
   try {
     const token = await getToken();
-    const surah = await fetchByChapter(token, id);
+    const surah = await fetchByChapter(
+      token,
+      id,
+      parseInt(page),
+      parseInt(perPage)
+    );
 
     return NextResponse.json(surah);
   } catch (err: any) {
@@ -19,7 +27,12 @@ export async function GET(_: Request, { params }: IParams) {
   }
 }
 
-async function fetchByChapter(accessToken: string, id: string) {
+async function fetchByChapter(
+  accessToken: string,
+  id: string,
+  page: number = 1,
+  perPage: number = 10
+) {
   const clientId = process.env.QURAN_CLIENT_ID!;
   const chapter = await fetch(
     `https://${process.env.QURAN_BASE_URL}/content/api/v4/chapters/${id}`,
@@ -28,22 +41,25 @@ async function fetchByChapter(accessToken: string, id: string) {
         "x-auth-token": accessToken,
         "x-client-id": clientId,
       },
+      next: { revalidate: 3600 * 24 * 7 },
     }
   );
 
   if (!chapter.ok) throw new Error(`Chapter request failed: ${chapter.status}`);
 
   const response = await fetch(
-    `https://${process.env.QURAN_BASE_URL}/content/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani`,
+    `https://${process.env.QURAN_BASE_URL}/content/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani&page=${page}&per_page=${perPage}&fields=image_url`,
     {
       headers: {
         "x-auth-token": accessToken,
         "x-client-id": clientId,
       },
+      next: { revalidate: 3600 * 24 * 7 },
     }
   );
 
-  if (!response.ok) throw new Error(`Token request failed: ${response.status}`);
+  if (!response.ok)
+    throw new Error(`Verses request failed: ${response.status}`);
 
   const chapterData = await chapter.json();
   const data = await response.json();

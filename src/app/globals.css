@@ -120,6 +120,7 @@
     @apply bg-background text-foreground;
   }
 }
+
 @font-face {
   font-family: "UthmanicHafs";
   src: url("/UthmanTSVer1.ttf") format("truetype");
@@ -128,5 +129,4 @@
 
 .quran-text {
   font-family: "UthmanicHafs", serif;
-  text-align: right;
 }
