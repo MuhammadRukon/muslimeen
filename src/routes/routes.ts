@@ -37,3 +37,9 @@ export const routes: (Route | NestedRoute)[] = [
     ],
   },
 ];
+
+export enum ApiRoutes {
+  Quran = "/api/quran",
+  Hadith = "/api/hadith",
+  Health = "/api/health",
+}

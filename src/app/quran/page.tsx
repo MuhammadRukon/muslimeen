@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 
 import { Container } from "@/components/container/container";
 import { IChapters } from "@/interfaces";
+import { Card } from "@/components/card/card";
+import { ApiRoutes } from "@/routes/routes";
 
 interface IState {
   data: IChapters[];
@@ -23,12 +25,11 @@ export default function page() {
       setState((prev) => ({ ...prev, loading: true }));
 
       try {
-        const res = await fetch("/api/quran");
+        const res = await fetch(ApiRoutes.Quran);
 
         if (!res.ok) throw new Error("Failed to fetch");
 
         const data: IChapters[] = await res.json();
-        console.log(data, "data");
 
         setState((prev) => ({ ...prev, data: data }));
       } catch (err) {
@@ -40,19 +41,29 @@ export default function page() {
 
     fetchData();
   }, []);
+
   return (
-    <Container>
-      <h1>Quran</h1>
+    <Container className="text-center">
+      <h1>All Surah</h1>
       {state.loading ? (
         <p>Loading...</p>
       ) : (
-        <p>
-          {state.data.map((chapter) => (
-            <span className="block" key={chapter.id}>
-              {chapter.name_simple}
-            </span>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 my-4">
+          {state.data.map((chapter, index) => (
+            <Card
+              key={chapter.id}
+              href={`/quran/${chapter.id}`}
+              className="grid grid-cols-3 text-sm justify-between"
+            >
+              <p className=" text-gray-500">{index + 1}</p>
+              <p className="text-nowrap">
+                {chapter.name_simple + " "}
+                <span className=" text-gray-500">({chapter.verses_count})</span>
+              </p>
+              <p>{chapter.name_arabic}</p>
+            </Card>
           ))}
-        </p>
+        </div>
       )}
     </Container>
   );

@@ -1,9 +1,10 @@
 import { Container } from "@/components/container/container";
+import React from "react";
 
-export default function Home() {
+export default function page() {
   return (
     <Container>
-      <h1>Home</h1>
+      <h1>Hadith Books</h1>
     </Container>
   );
 }

@@ -1,4 +1,4 @@
-import React from "react";
+"use client";
 import { Navbar } from "../navbar/navbar";
 
 export function Header() {
