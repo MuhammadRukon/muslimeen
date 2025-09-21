@@ -48,17 +48,13 @@ export async function getAccessToken(): Promise<{
 export async function getToken(): Promise<string> {
   const now = Date.now();
 
-  //TODO: THIS NEEDS TO BE FIXED
-  // if (cachedToken.expiresAt > now) {
-  //   return cachedToken.token;
-  // }
+  if (cachedToken.expiresAt > now) {
+    return cachedToken.token;
+  }
 
   const { token, expiresAt } = await getAccessToken();
 
-  cachedToken = {
-    token,
-    expiresAt,
-  };
+  cachedToken = { token, expiresAt };
 
   return token;
 }

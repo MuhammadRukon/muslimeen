@@ -1,5 +1,10 @@
+import { Container } from "@/components/container/container";
 import React from "react";
 
 export default function page() {
-  return <div>Inheritance Calculator</div>;
+  return (
+    <Container>
+      <div>Inheritance Calculator</div>
+    </Container>
+  );
 }

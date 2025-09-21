@@ -4,6 +4,7 @@ import { useParams } from "next/navigation";
 import { useEffect, useState, useCallback, useRef } from "react";
 
 import { IChapters, IVerseResponse } from "@/interfaces";
+
 import { ApiRoutes } from "@/routes/routes";
 import { versifier } from "@/lib/utils";
 
@@ -51,14 +52,15 @@ export default function Page() {
         if (!res.ok) throw new Error("Could not fetch Chapter");
 
         const data: IVerseResponse = await res.json();
-
         setHeader(data.chapter);
 
         const { arabic, translation: newTranslation } = versifier(data.verses);
 
         if (pagination.currentPage === data.pagination.current_page) {
-          setVerses(arabic);
-          setTranslation(newTranslation);
+          if (verses.length === 0) {
+            setVerses(arabic);
+            setTranslation(newTranslation);
+          }
         } else {
           setVerses((prev) => [...prev, ...arabic]);
           setTranslation((prev) => [...prev, ...newTranslation]);
@@ -156,15 +158,18 @@ Page.Header = ({ header }: { header: IChapters }) => {
 Page.Loader = () => {
   return (
     <>
-      <div className="flex flex-col gap-2 mx-auto w-1/2 my-10">
-        <div className="h-8 w-2/5 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
-        <div className="h-8 w-1/4 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
-        <div className="h-8 w-2/5 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
+      <div className="flex flex-col gap-2 mx-auto w-1/2 my-6">
+        {Array.from({ length: 3 }).map((_, idx) => (
+          <div
+            key={idx}
+            className="h-4 w-16 mx-auto bg-gray-200 rounded-md animate-pulse"
+          />
+        ))}
       </div>
 
       <div className="space-y-4">
-        {Array.from({ length: 10 }).map((_, index) => (
-          <Page.Skeleton key={index} />
+        {Array.from({ length: 10 }).map((_, idx) => (
+          <Page.Skeleton key={idx} />
         ))}
       </div>
     </>

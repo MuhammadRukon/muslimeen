@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+
 import { getToken } from "@/utils/token";
+import { fetchCustom } from "@/utils/fetch-custom";
 
 interface IParams {
   params: Promise<{ id: string }>;
@@ -33,36 +35,21 @@ async function fetchByChapter(
   page: number = 1,
   perPage: number = 10
 ) {
-  const clientId = process.env.QURAN_CLIENT_ID!;
-  const chapter = await fetch(
-    `https://${process.env.QURAN_BASE_URL}/content/api/v4/chapters/${id}`,
-    {
-      headers: {
-        "x-auth-token": accessToken,
-        "x-client-id": clientId,
-      },
-      next: { revalidate: 3600 * 24 * 7 },
-    }
+  const chapterInfoRes = await fetchCustom(`chapters/${id}`, accessToken);
+
+  if (!chapterInfoRes.ok)
+    throw new Error(`Chapter request failed: ${chapterInfoRes.status}`);
+
+  const chapterRes = await fetchCustom(
+    `verses/by_chapter/${id}?words=true&word_fields=text_uthmani&page=${page}&per_page=${perPage}`,
+    accessToken
   );
 
-  if (!chapter.ok) throw new Error(`Chapter request failed: ${chapter.status}`);
+  if (!chapterRes.ok)
+    throw new Error(`Verses request failed: ${chapterRes.status}`);
 
-  const response = await fetch(
-    `https://${process.env.QURAN_BASE_URL}/content/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani&page=${page}&per_page=${perPage}`,
-    {
-      headers: {
-        "x-auth-token": accessToken,
-        "x-client-id": clientId,
-      },
-      next: { revalidate: 3600 * 24 * 7 },
-    }
-  );
+  const chapterInfoData = await chapterInfoRes.json();
+  const chapterData = await chapterRes.json();
 
-  if (!response.ok)
-    throw new Error(`Verses request failed: ${response.status}`);
-
-  const chapterData = await chapter.json();
-  const data = await response.json();
-
-  return { ...data, chapter: chapterData.chapter };
+  return { ...chapterData, chapter: chapterInfoData.chapter };
 }

@@ -1,5 +1,9 @@
-import React from "react";
+import { Container } from "@/components/container/container";
 
 export default function page() {
-  return <div>Zakat Calculator</div>;
+  return (
+    <Container>
+      <div>Zakat Calculator</div>
+    </Container>
+  );
 }

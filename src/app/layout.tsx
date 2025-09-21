@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Muslimeen",
+  title: "Iqra",
   description: "Helps you to become a better muslim",
 };
 

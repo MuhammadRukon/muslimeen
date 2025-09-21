@@ -2,10 +2,11 @@
 
 import { useEffect, useState } from "react";
 
-import { Container } from "@/components/container/container";
 import { IChapters } from "@/interfaces";
-import { Card } from "@/components/card/card";
 import { ApiRoutes } from "@/routes/routes";
+
+import { Card } from "@/components/card/card";
+import { Container } from "@/components/container/container";
 import { Skeleton } from "@/components/card/skeleton";
 
 interface IState {
@@ -70,24 +71,18 @@ export default function Page() {
   );
 }
 
-Page.Loader = () => {
-  return (
-    <div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 my-4">
-        {Array.from({ length: 20 }).map((_, index) => (
-          <Page.Skeleton key={index} />
-        ))}
-      </div>
-    </div>
-  );
-};
+Page.Loader = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-3 my-4">
+    {Array.from({ length: 20 }).map((_, index) => (
+      <Page.Skeleton key={index} />
+    ))}
+  </div>
+);
 
-Page.Skeleton = () => {
-  return (
-    <Skeleton className="flex justify-between gap-10">
-      <div className="h-6 bg-gray-300 animate-pulse w-full rounded-md"></div>
-      <div className="h-6 bg-gray-300 animate-pulse w-full rounded-md"></div>
-      <div className="h-6 bg-gray-300 animate-pulse w-full rounded-md"></div>
-    </Skeleton>
-  );
-};
+Page.Skeleton = () => (
+  <Skeleton className="grid grid-cols-3 justify-items-center gap-10">
+    <div className="h-2 bg-gray-300 animate-pulse w-4 rounded-md"></div>
+    <div className="h-2 bg-gray-300 animate-pulse w-1/2 rounded-md"></div>
+    <div className="h-2 bg-gray-300 animate-pulse w-1/3 rounded-md"></div>
+  </Skeleton>
+);
