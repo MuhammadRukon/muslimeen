@@ -48,7 +48,7 @@ async function fetchByChapter(
   if (!chapter.ok) throw new Error(`Chapter request failed: ${chapter.status}`);
 
   const response = await fetch(
-    `https://${process.env.QURAN_BASE_URL}/content/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani&page=${page}&per_page=${perPage}&fields=image_url`,
+    `https://${process.env.QURAN_BASE_URL}/content/api/v4/verses/by_chapter/${id}?words=true&word_fields=text_uthmani&page=${page}&per_page=${perPage}`,
     {
       headers: {
         "x-auth-token": accessToken,

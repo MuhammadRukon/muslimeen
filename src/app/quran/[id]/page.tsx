@@ -8,6 +8,19 @@ import { ApiRoutes } from "@/routes/routes";
 import { versifier } from "@/lib/utils";
 
 import { Container } from "@/components/container/container";
+import { Skeleton } from "@/components/card/skeleton";
+
+interface PageFooterProps {
+  currentPage: number;
+  totalPages: number;
+}
+
+interface IPagePagination {
+  currentPage: number;
+  hasNextPage: boolean;
+  nextPage: number | null;
+  totalPages: number;
+}
 
 export default function Page() {
   const { id } = useParams();
@@ -17,12 +30,7 @@ export default function Page() {
   const [verses, setVerses] = useState<string[]>([]);
   const [translation, setTranslation] = useState<string[]>([]);
 
-  const [pagination, setPagination] = useState<{
-    currentPage: number;
-    hasNextPage: boolean;
-    nextPage: number | null;
-    totalPages: number;
-  }>({
+  const [pagination, setPagination] = useState<IPagePagination>({
     currentPage: 1,
     hasNextPage: false,
     nextPage: null,
@@ -95,22 +103,11 @@ export default function Page() {
 
   return (
     <Container>
-      {isLoading && <div className="text-center py-8">Loading...</div>}
+      {isLoading && <Page.Loader />}
       {error && <div className="text-red-500 text-center py-4">{error}</div>}
       {!isLoading && verses && (
         <div className="space-y-4">
-          {header && (
-            <>
-              <div className="text-center py-4">
-                <p className="text-4xl quran-text">{header.name_arabic}</p>
-                <h2 className="text-lg">{header.name_simple}</h2>
-                <p className="text-sm">{header.translated_name.name}</p>
-              </div>
-              <div className="quran-text text-2xl text-center">
-                بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-              </div>
-            </>
-          )}
+          {header && <Page.Header header={header} />}
           {verses.map((verse, index) => (
             <div
               className="text-2xl shadow-md p-4 rounded-md space-y-2"
@@ -123,22 +120,72 @@ export default function Page() {
 
           {pagination.hasNextPage && (
             <div ref={observerRef} className="text-center py-4">
-              <div className="bg-gray-200 p-4 animate-pulse duration-150 rounded-md min-h-24">
-                <div className="ml-auto h-8 bg-gray-300 rounded w-3/4 mb-2"></div>
-                <div className="h-8 bg-gray-300 rounded w-1/2 mb-2"></div>
-              </div>
+              <Page.Skeleton />
             </div>
           )}
 
           {!pagination.hasNextPage && verses.length > 0 && (
-            <div className="text-center py-8 text-gray-500">
-              <p className="text-sm mt-2">
-                Page {pagination.currentPage} of {pagination.totalPages}
-              </p>
-            </div>
+            <Page.Footer
+              currentPage={pagination.currentPage}
+              totalPages={pagination.totalPages}
+            />
           )}
         </div>
       )}
     </Container>
   );
 }
+
+Page.Header = ({ header }: { header: IChapters }) => {
+  return (
+    <>
+      <div className="text-center py-4">
+        <p className="text-4xl quran-text">{header.name_arabic}</p>
+        <h2 className="text-lg">{header.name_simple}</h2>
+        <p className="text-sm">{header.translated_name.name}</p>
+      </div>
+      {header.bismillah_pre && (
+        <div className="quran-text text-2xl text-center">
+          بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+        </div>
+      )}
+    </>
+  );
+};
+
+Page.Loader = () => {
+  return (
+    <>
+      <div className="flex flex-col gap-2 mx-auto w-1/2 my-10">
+        <div className="h-8 w-2/5 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
+        <div className="h-8 w-1/4 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
+        <div className="h-8 w-2/5 mx-auto bg-gray-200 rounded-md animate-pulse"></div>
+      </div>
+
+      <div className="space-y-4">
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Page.Skeleton key={index} />
+        ))}
+      </div>
+    </>
+  );
+};
+
+Page.Skeleton = () => {
+  return (
+    <Skeleton>
+      <div className="ml-auto h-8 bg-gray-300 rounded w-3/4 mb-2"></div>
+      <div className="h-8 bg-gray-300 rounded w-1/2 mb-2"></div>
+    </Skeleton>
+  );
+};
+
+Page.Footer = ({ currentPage, totalPages }: PageFooterProps) => {
+  return (
+    <div className="text-center py-8 text-gray-500">
+      <p className="text-sm mt-2">
+        Page {currentPage} of {totalPages}
+      </p>
+    </div>
+  );
+};
