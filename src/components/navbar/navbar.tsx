@@ -3,6 +3,8 @@
 import * as React from "react";
 import Link from "next/link";
 
+import { NestedRoute, Route, routes } from "@/routes/routes";
+
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -11,8 +13,10 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger,
 } from "@/components/ui/navigation-menu";
-import { routes } from "@/routes/routes";
-import { DropdownItemProps, ItemProps } from "./navbar.types";
+
+export type ItemProps = Route;
+
+export type DropdownItemProps = NestedRoute;
 
 export function Navbar() {
   return (
@@ -32,20 +36,20 @@ export function Navbar() {
   );
 }
 
-Navbar.Item = (route: ItemProps) => (
+Navbar.Item = ({ path, name }: ItemProps) => (
   <NavigationMenuLink asChild>
-    <Link href={route.path}>{route.name}</Link>
+    <Link href={path}>{name}</Link>
   </NavigationMenuLink>
 );
 
-Navbar.DropdownItem = (route: DropdownItemProps) => (
+Navbar.DropdownItem = ({ name, children }: DropdownItemProps) => (
   <>
     <NavigationMenuTrigger className="font-normal">
-      {route.name}
+      {name}
     </NavigationMenuTrigger>
     <NavigationMenuContent>
       <ul className="grid w-[350px] gap-2 grid-cols-1">
-        {route.children.map((child) => (
+        {children.map((child) => (
           <ListItem
             key={child.name}
             title={child.name}
