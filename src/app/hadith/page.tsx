@@ -1,8 +1,9 @@
+import React from "react";
+
+import { cardContent } from "../constants/static-data";
+
 import { LinkCard } from "@/components/card/link-card";
 import { Container } from "@/components/container/container";
-import { Scroll } from "lucide-react";
-import React from "react";
-import { cardContent } from "../constants/static-data";
 
 export default function page() {
   return (

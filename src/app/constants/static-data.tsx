@@ -1,5 +1,6 @@
 import { BookOpen, Scroll } from "lucide-react";
-
+export const GOLD_NISAAB = 87.5;
+export const SILVER_NISAAB = 612;
 export const cardContent = [
   {
     href: "/quran",
