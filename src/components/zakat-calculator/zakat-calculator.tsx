@@ -1,7 +1,6 @@
 "use client";
 import { GOLD_NISAAB, SILVER_NISAAB } from "@/app/constants/static-data";
 import React, { useEffect, useState } from "react";
-import { flushSync } from "react-dom";
 
 export function ZakatCalculator() {
   const [goldPrice, setGoldPrice] = useState(0);
